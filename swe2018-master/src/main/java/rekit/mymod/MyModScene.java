@@ -66,22 +66,24 @@ public final class MyModScene extends LevelScene {
 		//		For develop and debug.
 		//		Can be helpful when GameElements need references to other GameElements
 		
-		Beobachter beobachter = new Beobachter();
+		Beobachter beobachter = Beobachter.getBeobachter();
 		
-		Cannon pizza = new Cannon(new Vec(12, 2), beobachter);
+		Cannon pizza = new Cannon(new Vec(12, 2), "1");
 		this.addGameElement(pizza);
 		
 
-		Cannon pizza2 = new Cannon(new Vec(18, 2), beobachter);
+		Cannon pizza2 = new Cannon(new Vec(18, 2), "1");
 		this.addGameElement(pizza2);
 
-		Cannon pizza3 = new Cannon(new Vec(20, 2), beobachter);
+		Cannon pizza3 = new Cannon(new Vec(20, 2), "1");
 		this.addGameElement(pizza3);
 		
 
-		CannonFuse fuse = new CannonFuse(new Vec(12, 6), beobachter);
+		CannonFuse fuse = new CannonFuse(new Vec(12, 6), "1");
 		this.addGameElement(fuse);
-		
+
+		CannonFuse fuse2 = new CannonFuse(new Vec(15, 6), "1");
+		this.addGameElement(fuse2);
 
 		//CannonBullet ball = new CannonBullet(new Vec(12, 5));
 		//this.addGameElement(ball);

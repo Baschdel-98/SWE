@@ -5,36 +5,51 @@ import java.util.List;
 import rekit.logic.gameelements.GameElement;
 import rekit.mymod.enemies.Cannon;
 import rekit.mymod.enemies.CannonBullet;
+import rekit.mymod.inanimates.CannonFuse;
 
 public class Beobachter {
-	public interface Messages{
-		public void messageDestroy();
+	
+	private static Beobachter beobachter = null;
+	private List<Messenger> messenger = new ArrayList<>();
+	
+	public void addBullet(String id, CannonBullet bullet) {
+		getMesenger(id, true).addBullet(bullet);
 	}
 	
-	List<Messages> toMessage = new ArrayList<>();
-	List<CannonBullet> cannonBullets = new ArrayList<>();
-	
-	public void addCannonBullet(CannonBullet cannonBullet) {
-		cannonBullets.add(cannonBullet);
-		toMessage.add(cannonBullet);
+	public Messenger addCannon(String id, Cannon cannon) {
+		return getMesenger(id, true).addCannon(cannon);
 	}
 	
-	public boolean containsCannonBullet(GameElement argCannon) {
-		for (CannonBullet cannonBullet : cannonBullets) {
-			if(cannonBullet == argCannon) {
-				return true;
+	public Messenger addFuse(String id, CannonFuse fuse) {
+		return getMesenger(id, true).addFuse(fuse);
+	}
+	
+	private Messenger getMesenger(String id, boolean createNew) {
+		Messenger mes = getMesenger(id);
+		if(mes == null && createNew) {
+			mes = new Messenger(id);
+			messenger.add(mes);
+		}
+		return mes;
+	}
+	
+	private Messenger getMesenger(String id) {
+		for (Messenger mes : messenger) {
+			if(mes.getMessage() == id) {
+				return mes;
 			}
 		}
-		return false;
+		return null;
 	}
 	
-	public void addToMessage(Messages message) {
-		toMessage.add(message);
+	private Beobachter() {
+		
 	}
 	
-	public void sendMessage() {
-		for (Messages messages : toMessage) {
-			messages.messageDestroy();
+	public static Beobachter getBeobachter() {
+		if(beobachter == null) {
+			beobachter = new Beobachter();
 		}
+		return beobachter;
 	}
 }

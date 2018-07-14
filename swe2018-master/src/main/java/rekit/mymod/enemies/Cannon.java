@@ -5,42 +5,36 @@ import java.util.Random;
 import rekit.core.GameGrid;
 import rekit.logic.gameelements.type.Enemy;
 import rekit.mymod.Beobachter;
+import rekit.mymod.Messenger;
 import rekit.primitives.geometry.Polygon;
 import rekit.primitives.geometry.Vec;
 import rekit.primitives.image.RGBAColor;
 import rekit.util.ReflectUtils.LoadMe;
 
 @LoadMe
-public class Cannon extends Enemy implements Beobachter.Messages {
+public class Cannon extends Enemy{
 	private static final Vec SIZE_OUTER = new Vec(0.7f, 0.7f);
 	private static final RGBAColor COLOR_CANNON_SCHAFT = new RGBAColor(248, 199, 101, 255);
 
 	private int randomBorder;
 	private int randomCounter;
 	private Random RNG = new Random();
-	private Beobachter beobachter = null;
-	private boolean shoot = true;
+	private Messenger messenger = null;
+	private boolean explode = true;
 	private int ctr = 0;
 
-	public Cannon(Vec startPos) {
-		super(startPos, new Vec(), Cannon.SIZE_OUTER);
-
-		setRandom();
+	public Cannon(Vec startPos, String[] args) {
+		this(startPos, args[0]);
 	}
 
-	public Cannon(Vec startPos, Beobachter beobachter) {
+	public Cannon(Vec startPos, String id) {
 		super(startPos, new Vec(), Cannon.SIZE_OUTER);
-		setBeobachter(beobachter);
+		getMessenger(id);
 		setRandom();
 	}
 	
-	public Beobachter getBeobachter() {
-		return beobachter;
-	}
-	
-	public void setBeobachter(Beobachter beobachter) {
-		this.beobachter = beobachter;
-		beobachter.addToMessage(this);
+	public void getMessenger(String id) {
+		messenger = Beobachter.getBeobachter().addCannon(id, this);
 	}
 
 	private void setRandom() {
@@ -55,15 +49,15 @@ public class Cannon extends Enemy implements Beobachter.Messages {
 	}
 
 	private void shoot() {
-		if(shoot) {
+		if(explode) {
 			if (randomCounter < randomBorder) {
 				randomCounter++;
 			} else {
 				setRandom();
 				Vec direction = getDirection();
-				CannonBullet bullet = new CannonBullet(getMiddle(), direction);
-				if(beobachter != null) {
-					beobachter.addCannonBullet(bullet);
+				CannonBullet bullet = new CannonBullet(getMiddle(), direction, messenger);
+				if(messenger != null) {
+					messenger.addBullet(bullet);
 				}
 				this.getScene().addGameElement(bullet);
 			}
@@ -98,7 +92,7 @@ public class Cannon extends Enemy implements Beobachter.Messages {
 
 	@Override
 	public void internalRender(GameGrid f) {
-		if(shoot) {
+		if(explode) {
 		f.drawPolygon(createPolygon(), COLOR_CANNON_SCHAFT, true);
 
 		f.drawImage(getPos(), this.getSize(), "roboindustries/cannon_back.png");
@@ -121,12 +115,10 @@ ctr++;
 
 	@Override
 	public Enemy create(Vec arg0, String... arg1) {
-		return new Cannon(arg0);
+		return new Cannon(arg0, arg1);
 	}
 
-	@Override
-	public void messageDestroy() {
-		shoot = false;
+	public void explode() {
+		explode = false;
 	}
-
 }

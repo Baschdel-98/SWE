@@ -3,28 +3,34 @@ package rekit.mymod.enemies;
 import rekit.core.GameGrid;
 import rekit.logic.gameelements.GameElement;
 import rekit.logic.gameelements.type.Enemy;
-import rekit.mymod.Beobachter.Messages;
+import rekit.mymod.Messenger;
 import rekit.primitives.geometry.Direction;
 import rekit.primitives.geometry.Frame;
 import rekit.primitives.geometry.Vec;
 
-public class CannonBullet extends Enemy implements Messages{
+public class CannonBullet extends Enemy{
 	private static final Vec SIZE_OUTER = new Vec(0.5f, 0.5f);
+	private Messenger messenger = null;
 
 	private int ctr = 0;
 
-	public CannonBullet(Vec startPos, Vec direction) {
+	public CannonBullet(Vec startPos, Vec direction, Messenger messenger) {
 		super(startPos, new Vec(), CannonBullet.SIZE_OUTER);
+		this.messenger = messenger;
 
 		float length = (float) Math.sqrt(direction.x*direction.x+direction.y*direction.y);
 		this.setVel(direction.scalar(1/length));
 	}
 
+	public Messenger gerMessenger() {
+		return messenger;
+	}
+	
 	@Override
 	protected void innerLogicLoop() {
 		// calculate new position
 		// s1 = s0 + v*t because physics, thats why!
-		Vec vec = this.getVel();
+		//Vec vec = this.getVel();
 		
 		this.setPos(this.getPos().add(this.getVel().scalar(this.deltaTime / 300F)));
 	}
@@ -64,11 +70,6 @@ public class CannonBullet extends Enemy implements Messages{
 	public Enemy create(Vec arg0, String... arg1) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void messageDestroy() {
-		destroy();
 	}
 
 }
