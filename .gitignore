@@ -38,3 +38,4 @@ target/
 
 # Windows
 Thumbs.db
+.metadata/.plugins/org.eclipse.m2e.core/nexus/05b0fe8524860bd73cbb07ef30fb34cc/segments.gen
